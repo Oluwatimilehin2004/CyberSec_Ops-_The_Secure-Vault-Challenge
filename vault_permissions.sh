@@ -1,35 +1,45 @@
-#! /bin/bash
-vault_dir="$HOME/secure_vault"
-if [ ! -d "$vault_dir" ]; then
-echo " Error: secure_vault directory not found"
-exit 1
+#!/bin/bash
+
+# Check vault exists
+if [[ ! -d "$HOME/secure_vault" ]]; then
+    echo "Error: secure_vault doesn't exist!"
+    exit 1
 fi
 
+#list current file permissions
+cd $HOME/secure_vault
+echo "Current file permissions:"
+ls -l
 
-update_permission() {
- file_name=$1
- default_perm=$2
- file_path="$vault_dir/$file_name"
+# Function to update a single file
+update_file_permission() {
+    file=$1
+    default_perm=$2
 
-    echo " Checking $file_name..."
-    ls -l "$file_path"
+    echo ""
+    echo "File: $file"
+    ls -l "$file"
 
-    echo -n "Do you want to update permissions for $file_name? (yes/no): "
-    read answer
+    read -p "Do you want to update permission for $file? (Yes/No, Press enter for default permission $default_perm): " choice
 
-    if [[ "$answer" = "yes" ]]; then
-        echo -n "Enter new permission (e.g., 600): "
-        read new_perm
-        chmod "$new_perm" "$file_name"
-        echo " Updated $file_name to $new_perm"
-    elif [[ -z $answer ]]; then
-        chmod $default_perm "$file_name"
-        echo "No input detected. Applied default permission $default_perm to $file_name"
+    if [[ $choice = "Yes" || $choice = "yes" ]]; then
+        read -p "Enter new permission (e.g., 600, 644, 755): " newperm
+        chmod $newperm "$file"
+        echo "Updated $file to $newperm"
+    elif [[ -z $choice ]]; then
+        chmod $default_perm "$file"
+        echo "No input → applied default $default_perm to $file"
     else
-        echo " Keeping existing permissions for $file_name"
+        echo "Invalid permission. Skipped $file"
     fi
 }
-# Apply permission logic to each file
-update_permission "keys.txt" 600
-update_permission "secrets.txt" 640
-update_permission "logs.txt" 644
+
+# Apply function to each file individually
+update_file_permission keys.txt 600
+update_file_permission secrets.txt 640
+update_file_permission logs.txt 644
+
+# Display final permissions
+echo ""
+echo "Final file permissions:"
+ls -l
