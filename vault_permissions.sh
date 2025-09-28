@@ -30,7 +30,7 @@ update_file_permission() {
         chmod $default_perm "$file"
         echo "No input → applied default $default_perm to $file"
     else
-        echo "Invalid permission. Skipped $file"
+        echo "Skipped $file"
     fi
 }
 
