@@ -26,10 +26,12 @@ update_file_permission() {
         read -p "Enter new permission (e.g., 600, 644, 755): " newperm
         chmod $newperm "$file"
         echo "Updated $file to $newperm"
+	A
     elif [[ -z $choice ]]; then
         chmod $default_perm "$file"
         echo "No input → applied default $default_perm to $file"
     else
+	    A
         echo "Skipped $file"
     fi
 }
